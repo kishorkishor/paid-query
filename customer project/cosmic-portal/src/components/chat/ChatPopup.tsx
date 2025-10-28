@@ -53,7 +53,7 @@ export function ChatPopup() {
       aria-label="Open chat"
       onClick={() => setOpen(true)}
       className={cn(
-        "fixed bottom-5 right-5 z-40 h-14 w-14 rounded-full brand-gradient text-white shadow-[0_12px_30px_rgba(227,67,31,.35)]",
+        "fixed bottom-24 md:bottom-5 right-5 z-40 h-14 w-14 rounded-full brand-gradient text-white shadow-[0_12px_30px_rgba(227,67,31,.35)]",
         "grid place-items-center hover:brightness-110 transition"
       )}
     >
@@ -84,7 +84,7 @@ export function ChatPopup() {
           {open && (
             <Dialog.Content asChild>
               <motion.div
-                className="fixed bottom-5 right-5 z-50 w-[min(95vw,420px)] overflow-hidden glass-panel glass-orange"
+                className="fixed bottom-24 md:bottom-5 right-5 z-50 w-[min(95vw,420px)] overflow-hidden glass-panel glass-orange"
                 initial={{ y: 40, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: 20, opacity: 0 }}

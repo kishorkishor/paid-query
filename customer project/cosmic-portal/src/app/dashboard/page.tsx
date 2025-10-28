@@ -17,10 +17,10 @@ export default function DashboardPage() {
   return (
     <AppShell>
       <div className="glass-panel p-6 md:p-8 flex flex-col gap-6">
-        <div className="flex items-center justify-between gap-6 flex-wrap">
+        <div className="flex items-center justify-between gap-4 md:gap-6 flex-wrap">
           <div>
-            <h1 className="font-[var(--font-heading)] text-2xl font-semibold">Welcome back</h1>
-            <p className="text-sm text-neutral-500">Your latest activity at a glance</p>
+            <h1 className="font-[var(--font-heading)] text-xl md:text-2xl font-semibold">Welcome back</h1>
+            <p className="text-xs md:text-sm text-neutral-500">Your latest activity at a glance</p>
           </div>
           <div className="flex gap-3">
             <Link href="/wallet">
@@ -31,52 +31,52 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <section className="glass-card p-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between border border-brand-border/40 shadow-[0_20px_55px_rgba(255,122,50,0.18)]">
+        <section className="glass-card p-4 md:p-6 flex flex-col gap-3 md:gap-4 md:flex-row md:items-center md:justify-between border border-brand-border/40 shadow-[0_20px_55px_rgba(255,122,50,0.18)]">
           <div>
-            <h2 className="font-[var(--font-heading)] text-xl font-semibold text-brand-secondary">
+            <h2 className="font-[var(--font-heading)] text-lg md:text-xl font-semibold text-brand-secondary">
               Launch a new sourcing query
             </h2>
-            <p className="text-sm text-brand-muted">
+            <p className="text-xs md:text-sm text-brand-muted">
               Tell us what you need and get matched with the right suppliers in minutes.
             </p>
           </div>
           <Link href="/queries/new">
-            <Button className="brand-gradient-ember px-6 h-12 rounded-full shadow-[0_18px_45px_rgba(255,122,50,0.28)] hover:shadow-[0_22px_55px_rgba(255,122,50,0.38)]">
+            <Button className="brand-gradient-ember px-5 md:px-6 h-11 md:h-12 rounded-full shadow-[0_18px_45px_rgba(255,122,50,0.28)] hover:shadow-[0_22px_55px_rgba(255,122,50,0.38)]">
               <Plus size={18} />
               New Query
             </Button>
           </Link>
         </section>
 
-        <section className="grid gap-4 grid-cols-1 sm:grid-cols-2 xl:grid-cols-5">
+        <section className="grid gap-3 md:gap-4 grid-cols-2 sm:grid-cols-2 xl:grid-cols-5">
           {stats.map((s) => (
             <Card key={s.label}>
               <CardHeader className="pb-1 flex items-center justify-between">
-                <span className="text-sm text-neutral-500">{s.label}</span>
+                <span className="text-xs md:text-sm text-neutral-500">{s.label}</span>
                 <Badge color={s.color}>{s.color.toUpperCase()}</Badge>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold">{s.value}</div>
+                <div className="text-2xl md:text-3xl font-bold">{s.value}</div>
               </CardContent>
             </Card>
           ))}
         </section>
 
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4">
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
-                <h3 className="font-semibold">Recent Queries</h3>
+                <h3 className="font-semibold text-base md:text-lg">Recent Queries</h3>
                 <Button variant="ghost">View All</Button>
               </div>
             </CardHeader>
             <CardContent>
-              <ul className="space-y-3">
+              <ul className="space-y-2 md:space-y-3">
                 {[1, 2, 3, 4].map((i) => (
                   <li key={i} className="flex items-center justify-between">
                     <div>
-                      <div className="font-medium">Smartwatch bulk order</div>
-                      <div className="text-xs text-neutral-500">Added today - Qty 100</div>
+                      <div className="font-medium text-sm md:text-base">Smartwatch bulk order</div>
+                      <div className="text-[11px] md:text-xs text-neutral-500">Added today - Qty 100</div>
                     </div>
                     <Badge color={i % 2 ? "orange" : "blue"}>{i % 2 ? "NEW" : "ASSIGNED"}</Badge>
                   </li>
@@ -87,14 +87,14 @@ export default function DashboardPage() {
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
-                <h3 className="font-semibold">Wallet</h3>
+                <h3 className="font-semibold text-base md:text-lg">Wallet</h3>
                 <Button variant="ghost">View</Button>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-sm text-neutral-500">Current Balance</div>
-              <div className="text-4xl font-bold mt-1">{formatCurrency(2570)}</div>
-              <div className="mt-4 grid grid-cols-2 gap-3">
+              <div className="text-xs md:text-sm text-neutral-500">Current Balance</div>
+              <div className="text-3xl md:text-4xl font-bold mt-1">{formatCurrency(2570)}</div>
+              <div className="mt-4 grid grid-cols-2 gap-2 md:gap-3">
                 <Button>Top Up</Button>
                 <Button variant="outline">History</Button>
               </div>

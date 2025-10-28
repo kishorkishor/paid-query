@@ -1,34 +1,28 @@
-Cosmic Trading Customer Portal
+Cosmic Trading Customer Portal — File System and How It Works
 
-Production-ready Next.js 16 app (TypeScript + Tailwind) with a PHP backend in `public_html`. This repository is prepared for Netlify deployment.
+Structure
+- `public_html/`
+  - `index.html` — legacy landing/dashboard
+  - `customer/` — legacy customer PHP pages (orders, wallet, query details)
+  - `api/` — PHP JSON endpoints used by the SPA
+  - `uploads/`, `logs/` — runtime assets and logs
 
-Tech Stack
-- Next.js 16 (App Router), React 19, TypeScript
-- Tailwind CSS 4, Framer Motion
-- React Query (@tanstack/react-query)
-- Clerk (auth)
-- PHP 7.4+ for legacy APIs under `public_html/api`
+- `customer project/cosmic-portal/` (Next.js app)
+  - `src/app/` — App Router pages (dashboard, queries, orders, wallet)
+  - `src/components/` — UI, layout, chat popup
+  - `src/lib/api.ts` — API client; reads `NEXT_PUBLIC_API_BASE_URL`
+  - `src/types/` — shared types
+  - `src/app/api/mock/*` — mock endpoints where PHP JSON isn’t available
 
-Run Locally
-1) PHP dev server (serves real APIs):
-   - PowerShell: `./serve.ps1 -Port 8000`
-   - CMD: `serve.bat`
-   - URL: `http://localhost:8000`
-2) Next.js app:
-   - `cd "customer project/cosmic-portal"`
-   - Set `NEXT_PUBLIC_API_BASE_URL=http://localhost:8000`
-   - `npm run dev` → `http://localhost:3000`
+How It Works
+- The SPA calls PHP APIs at `NEXT_PUBLIC_API_BASE_URL`.
+- Clerk JWT is passed to PHP (Authorization header or `__session` cookie).
+- Real endpoints wired: queries list/stats/details, create query, add message, countries, wallet capture.
+- Still mocked until PHP JSON exists: wallet balance/history, orders list/details.
 
-Netlify Deployment
-- Base directory: `customer project/cosmic-portal`
-- Build command: `npm run build`
-- Publish directory: `.next`
-- Environment:
-  - `NEXT_PUBLIC_API_BASE_URL` = your PHP host (e.g. `https://yourdomain.com`)
-  - `NEXT_TELEMETRY_DISABLED=1`
-  - Clerk keys if using auth
-- `netlify.toml` and `@netlify/plugin-nextjs` are included in the Next app directory.
+Environment
+- `NEXT_PUBLIC_API_BASE_URL` = base URL of `public_html` (e.g. `http://localhost:8000`).
 
-Notes
-- Some modules still use mock routes until corresponding PHP JSON endpoints are added (orders, wallet history). Real query APIs are wired.
+Mobile
+- Phone view includes a bottom nav; chat button floats above the nav.
 

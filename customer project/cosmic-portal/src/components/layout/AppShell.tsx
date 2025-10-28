@@ -2,6 +2,8 @@ import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
 import { ChatPopup } from "@/components/chat/ChatPopup";
 import { ReactNode } from "react";
+import Link from "next/link";
+import { LayoutGrid, MessageSquare, ShoppingCart, CreditCard } from "lucide-react";
 
 export function AppShell({ children }: { children: ReactNode }) {
   return (
@@ -17,12 +19,34 @@ export function AppShell({ children }: { children: ReactNode }) {
           <Header />
         </div>
         <Sidebar />
-        <main className="p-4 md:p-8">
+        <main className="p-4 pb-24 md:pb-8 md:p-8">
           <div className="space-y-6 max-w-6xl w-full mx-auto">
             {children}
           </div>
         </main>
       </div>
+
+      {/* Mobile bottom nav */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-[#0b101d]/95 border-t border-white/60 dark:border-white/10 backdrop-blur supports-[backdrop-filter]:backdrop-blur-sm safe-area-inset-bottom">
+        <div className="mx-auto max-w-3xl grid grid-cols-4">
+          <Link href="/dashboard" className="flex flex-col items-center py-3 text-xs font-semibold text-[#2b48c6] dark:text-[#7aa2ff]">
+            <LayoutGrid size={18} />
+            <span>Home</span>
+          </Link>
+          <Link href="/queries" className="flex flex-col items-center py-3 text-xs font-semibold text-[#2b48c6] dark:text-[#7aa2ff]">
+            <MessageSquare size={18} />
+            <span>Queries</span>
+          </Link>
+          <Link href="/orders" className="flex flex-col items-center py-3 text-xs font-semibold text-[#2b48c6] dark:text-[#7aa2ff]">
+            <ShoppingCart size={18} />
+            <span>Orders</span>
+          </Link>
+          <Link href="/wallet" className="flex flex-col items-center py-3 text-xs font-semibold text-[#2b48c6] dark:text-[#7aa2ff]">
+            <CreditCard size={18} />
+            <span>Wallet</span>
+          </Link>
+        </div>
+      </nav>
 
       <ChatPopup />
     </div>
