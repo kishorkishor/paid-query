@@ -1,0 +1,194 @@
+@import "tailwindcss";
+
+/* Cosmic Glass Design System */
+:root {
+  --brand-primary: #ff7a32;
+  --brand-primary-strong: #ff9a3d;
+  --brand-electric: #ffb347;
+  --brand-secondary: #261712;
+  --brand-muted: #7b5f52;
+  --brand-background: #fff5ec;
+  --brand-panel: rgba(255, 255, 255, 0.94);
+  --brand-card: rgba(255, 252, 246, 0.9);
+  --brand-glass-accent: rgba(255, 141, 74, 0.18);
+  --brand-border: rgba(186, 116, 66, 0.12);
+  --radius: 18px;
+  --shadow-soft: 0 28px 70px rgba(121, 62, 31, 0.1);
+  --shadow-strong: 0 42px 120px rgba(121, 62, 31, 0.2);
+}
+
+.dark {
+  --brand-primary: #ff9353;
+  --brand-primary-strong: #ffb26b;
+  --brand-electric: #ffce91;
+  --brand-secondary: #fff6ec;
+  --brand-muted: #fbb07d;
+  --brand-background: #120805;
+  --brand-panel: rgba(28, 16, 13, 0.9);
+  --brand-card: rgba(31, 18, 14, 0.86);
+  --brand-glass-accent: rgba(255, 152, 92, 0.22);
+  --brand-border: rgba(255, 190, 154, 0.16);
+  --shadow-soft: 0 32px 90px rgba(12, 5, 2, 0.5);
+  --shadow-strong: 0 48px 140px rgba(12, 5, 2, 0.7);
+}
+
+@theme inline {
+  --color-brand-primary: var(--brand-primary);
+  --color-brand-secondary: var(--brand-secondary);
+  --color-brand-muted: var(--brand-muted);
+  --color-brand-background: var(--brand-background);
+  --shadow-soft: var(--shadow-soft);
+  --shadow-strong: var(--shadow-strong);
+  --radius: var(--radius);
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-poppins);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-inter), ui-sans-serif, system-ui, -apple-system;
+  background-color: var(--brand-background);
+  background-image:
+    radial-gradient(circle at 10% 12%, rgba(255, 177, 107, 0.24), transparent 42%),
+    radial-gradient(circle at 82% 6%, rgba(255, 255, 255, 0.85), transparent 55%),
+    radial-gradient(circle at 60% 65%, rgba(255, 163, 106, 0.12), transparent 58%),
+    linear-gradient(160deg, #fffaf5, #ffeede);
+  color: var(--brand-secondary);
+  transition: background 0.4s ease, color 0.4s ease;
+}
+
+.dark body {
+  background-image:
+    radial-gradient(circle at 22% 20%, rgba(255, 155, 88, 0.32), transparent 48%),
+    radial-gradient(circle at 78% 12%, rgba(43, 20, 9, 0.6), transparent 60%),
+    linear-gradient(140deg, #0f0502, #1c0b06);
+  color: var(--brand-secondary);
+}
+
+::selection {
+  background: var(--brand-primary);
+  color: #fff;
+}
+
+.ambient-blur {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.glass {
+  background: linear-gradient(140deg, var(--brand-panel), rgba(255, 255, 255, 0.6));
+  border: 1px solid var(--brand-border);
+  border-radius: var(--radius);
+  color: var(--brand-secondary);
+  box-shadow: var(--shadow-soft);
+}
+
+.dark .glass {
+  background: linear-gradient(140deg, var(--brand-panel), rgba(8, 13, 26, 0.8));
+  color: var(--brand-secondary);
+}
+
+.glass-panel {
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.95), rgba(255, 245, 233, 0.85));
+  border: 1px solid rgba(255, 182, 128, 0.24);
+  border-radius: 28px;
+  box-shadow: var(--shadow-strong);
+  color: var(--brand-secondary);
+}
+
+.dark .glass-panel {
+  background: linear-gradient(150deg, var(--brand-panel), rgba(39, 19, 10, 0.88));
+  border-color: var(--brand-border);
+}
+
+.glass-card {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.95), rgba(255, 248, 239, 0.88));
+  border: 1px solid rgba(255, 177, 107, 0.2);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+  color: var(--brand-secondary);
+}
+
+.dark .glass-card {
+  background: linear-gradient(160deg, rgba(39, 21, 12, 0.92), rgba(22, 11, 6, 0.94));
+  border-color: var(--brand-border);
+  color: var(--brand-secondary);
+}
+
+.glass-orange {
+  background: linear-gradient(130deg, rgba(255, 184, 118, 0.28), rgba(255, 238, 221, 0.2));
+  border: 1px solid rgba(255, 190, 140, 0.38);
+  box-shadow: 0 30px 80px rgba(255, 163, 106, 0.22);
+}
+
+.dark .glass-orange {
+  background: linear-gradient(125deg, rgba(71, 35, 18, 0.72), rgba(26, 12, 6, 0.9));
+  border: 1px solid rgba(255, 176, 117, 0.3);
+  box-shadow: 0 35px 100px rgba(71, 35, 18, 0.42);
+}
+
+.brand-gradient {
+  background: linear-gradient(135deg, var(--brand-primary), var(--brand-primary-strong));
+}
+
+.brand-gradient-blue {
+  background: linear-gradient(135deg, #ff7d3b, var(--brand-electric));
+}
+
+.brand-gradient-ember {
+  background: linear-gradient(130deg, #ff7a32, #ff9f3f);
+  color: #ffffff;
+}
+
+.sidebar-surface {
+  background: linear-gradient(150deg, rgba(255, 247, 238, 0.96), rgba(255, 231, 205, 0.88));
+  border: 1px solid rgba(255, 190, 140, 0.35);
+  box-shadow: 0 28px 70px rgba(121, 62, 31, 0.18);
+}
+
+.dark .sidebar-surface {
+  background: linear-gradient(145deg, rgba(40, 20, 11, 0.95), rgba(24, 12, 6, 0.9));
+  border-color: rgba(255, 176, 117, 0.24);
+  box-shadow: 0 30px 90px rgba(12, 5, 2, 0.5);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, var(--brand-primary), var(--brand-primary-strong));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.text-gradient-blue {
+  background: linear-gradient(135deg, var(--brand-electric), #66c1ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Header visibility fixes: force black text in light mode */
+header .header-title { color: #000 !important; }
+header .header-subtitle { color: #000 !important; opacity: 0.8; }
+header .header-chip { color: #000 !important; }
+header .header-initials { color: #000 !important; }
+header button[aria-label="Notifications"] { color: #000 !important; }
+
+.dark header .header-title { color: #fff !important; }
+.dark header .header-subtitle { color: rgba(255,255,255,0.7) !important; }
+.dark header .header-chip { color: rgba(255,255,255,0.85) !important; }
+.dark header .header-initials { color: rgba(255,255,255,0.9) !important; }
+.dark header button[aria-label="Notifications"] { color: #fff !important; }
+
+/* Sidebar nav default readability */
+.sidebar-surface nav a { color: #000 !important; }
+.sidebar-surface nav a svg { color: rgba(0,0,0,0.7) !important; }
+.dark .sidebar-surface nav a { color: rgba(255,255,255,0.85) !important; }
+.dark .sidebar-surface nav a svg { color: rgba(255,255,255,0.7) !important; }

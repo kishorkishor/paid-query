@@ -1,0 +1,563 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Cosmic Trading — Customer</title>
+
+  <style>
+    :root{--ink:#111827;--bg:#f7f7fb;--card:#fff;--muted:#6b7280;--line:#eee}
+    body{font-family:system-ui,Arial,sans-serif;margin:0;background:var(--bg)}
+    header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;background:var(--ink);color:#fff}
+    .container{max-width:1000px;margin:30px auto;padding:20px;background:var(--card);border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.06)}
+    nav a{margin-right:14px;cursor:pointer;font-weight:600}
+    .hidden{display:none}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top}
+    label{display:block;margin:.6rem 0 .25rem;font-weight:600}
+    input,select,textarea{width:100%;padding:.7rem;border:1px solid #e5e7eb;border-radius:10px;background:#fff}
+    button{padding:.8rem 1.2rem;border:0;border-radius:12px;cursor:pointer;background:var(--ink);color:#fff}
+    .btn-ghost{background:#eef; color:#111827}
+    .btn-light{background:#f3f4f6; color:#111827}
+    .note{color:var(--muted);font-size:.9rem;margin-top:8px}
+    .badge{padding:4px 8px;border-radius:999px;background:#eef;border:1px solid #dde}
+    .pill{padding:10px;border-radius:12px;background:#f6f6ff;border:1px solid #e5e7ff}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+    .cards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+    .card{background:#fafafa;border:1px solid var(--line);border-radius:12px;padding:14px;text-align:center}
+    .card h3{margin:0;font-size:1rem;color:var(--muted)}
+    .card div{font-size:1.6rem;font-weight:700;margin-top:6px}
+  </style>
+
+  <!-- ClerkJS -->
+  <script async crossorigin="anonymous"
+    data-clerk-publishable-key="pk_test_c3VpdGVkLWdyb3VwZXItOTkuY2xlcmsuYWNjb3VudHMuZGV2JA"
+    src="https://suited-grouper-99.clerk.accounts.dev/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
+    type="text/javascript"></script>
+</head>
+<body>
+  <header>
+    <div><strong>Cosmic Trading</strong> — Customer</div>
+    <div id="user-button"></div>
+  </header>
+
+  <div class="container">
+    <nav id="nav" class="hidden">
+      <a id="lnkHome">Dashboard</a>
+      <a id="lnkList">My Queries</a>
+      <a id="lnkNew">New Query</a>
+    </nav>
+
+    <div id="auth"></div>
+
+    <!-- HOME (dashboard) -->
+    <div id="viewHome" class="hidden">
+      <h2>Dashboard</h2>
+      <div class="cards">
+        <div class="card"><h3>Total</h3><div id="cTotal">0</div></div>
+        <div class="card"><h3>New</h3><div id="cNew">0</div></div>
+        <div class="card"><h3>Assigned</h3><div id="cAssigned">0</div></div>
+        <div class="card"><h3>In Process</h3><div id="cInproc">0</div></div>
+        <div class="card"><h3>Red Flags</h3><div id="cRed">0</div></div>
+      </div>
+
+      <!-- NEW: My Orders button -->
+      <div style="margin:14px 0 6px">
+        <button id="btnOrders" class="btn-light" type="button">My Orders</button>
+        <span class="note">View orders you’ve created from approved queries.</span>
+      </div>
+
+      <h3 style="margin-top:16px">Recent</h3>
+      <table id="tblRecent"></table>
+    </div>
+
+    <!-- LIST -->
+    <div id="viewList" class="hidden">
+      <h2>My Queries</h2>
+      <table id="tbl"></table>
+    </div>
+
+    <!-- DETAILS -->
+    <div id="viewDetails" class="hidden">
+      <div><a id="backToList" style="cursor:pointer">← Back</a></div>
+      <h2 id="qdTitle"></h2>
+      <p class="note" id="qdMeta"></p>
+
+      <h3>Product details</h3>
+      <div id="qdDetails" class="pill"></div>
+
+      <h3>Product links</h3>
+      <div id="qdLinks" class="pill"></div>
+
+      <h3>Attachments</h3>
+      <div id="qdAtts"></div>
+
+      <h3>Messages</h3>
+      <div id="qdMsgs" style="border:1px solid #eee;border-radius:12px;padding:12px;max-height:340px;overflow:auto"></div>
+      <form id="msgForm" style="display:flex;gap:10px;margin-top:10px">
+        <input type="hidden" name="id" id="msgQueryId">
+        <textarea name="body" id="msgBody" rows="2" style="flex:1" placeholder="Write a message to our team..." required></textarea>
+        <button type="submit">Send</button>
+      </form>
+    </div>
+
+    <!-- NEW -->
+    <div id="viewNew" class="hidden">
+      <h2>New Query</h2>
+
+      <!-- Extend + Reset -->
+      <div style="margin:8px 0 16px; display:flex; gap:8px; align-items:center">
+        <button id="btnExtend" class="btn-ghost" type="button">Extend Query</button>
+        <button id="btnReset" class="btn-light" type="button">Reset visibility</button>
+        <span class="note">Initially only the basic 4 fields are shown.</span>
+      </div>
+
+      <form id="queryForm" enctype="multipart/form-data">
+        <!-- Name / Phone (always visible) -->
+        <div class="row">
+          <div>
+            <label>Customer name</label>
+            <input name="customer_name" required>
+          </div>
+          <div>
+            <label>Phone</label>
+            <input name="phone" placeholder="+8801..." required>
+          </div>
+        </div>
+
+        <!-- Service details (always visible) -->
+        <label>Service details</label>
+        <textarea name="product_details" rows="4" required
+          placeholder="Describe the service you need (e.g., sourcing/shipping scope, specs, timelines, etc.)"></textarea>
+
+        <!-- Country (always visible at start) -->
+        <label>Country</label>
+        <select name="country_id" id="countrySelect" required>
+          <option value="">Loading countries...</option>
+        </select>
+        <div class="note" id="countryMsg"></div>
+
+        <!-- Product Name (optional; shown when type is selected) -->
+        <div id="groupProductName">
+          <label>Product Name</label>
+          <input type="text" name="product_name" id="productName" placeholder="e.g., Men’s t-shirt (200 GSM)">
+        </div>
+
+        <!-- Query Type (optional; appears on Extend) -->
+        <div id="extendArea" class="hidden">
+          <div class="row">
+            <div>
+              <label>Query type</label>
+              <select name="query_type" id="queryType">
+                <option value="other">Other</option>
+                <option value="sourcing">Sourcing</option>
+                <option value="shipping">Shipping</option>
+                <option value="both">Both</option>
+              </select>
+            </div>
+            <div id="groupShippingMode">
+              <label>Shipping mode</label>
+              <select name="shipping_mode" id="shippingMode">
+                <option value="unknown">Unknown</option>
+                <option value="air">Air</option>
+                <option value="sea">Sea</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product links (optional) -->
+        <div id="groupProductLinks">
+          <label>Product links (comma separated)</label>
+          <input name="product_links" placeholder="https://...">
+        </div>
+
+        <div class="row-3">
+          <div id="groupQuantity">
+            <label>Quantity</label>
+            <input name="quantity">
+          </div>
+          <div id="groupBudget">
+            <label>Budget (USD)</label>
+            <input type="number" step="0.01" name="budget">
+          </div>
+          <div id="groupAttachments">
+            <label>Attachments</label>
+            <input type="file" name="attachments[]" multiple accept=".pdf,.jpg,.jpeg,.png">
+          </div>
+        </div>
+
+        <!-- Extra logistics (all optional) -->
+        <div class="row-3">
+          <div id="groupLabelType">
+            <label>Label type</label>
+            <input name="label_type" placeholder="e.g., FBA / Custom / Plain">
+          </div>
+          <div id="groupCarton">
+            <label>No of carton</label>
+            <input type="number" name="carton_count" min="0" step="1" placeholder="0">
+          </div>
+          <div id="groupCbm">
+            <label>CBM</label>
+            <input type="number" name="cbm" min="0" step="0.0001" placeholder="e.g., 1.2345">
+          </div>
+        </div>
+
+        <div id="groupAddress">
+          <label>Address</label>
+          <textarea name="address" rows="2"></textarea>
+        </div>
+
+        <div id="groupNotes">
+          <label>Notes</label>
+          <textarea name="notes" rows="2"></textarea>
+        </div>
+
+        <div style="margin-top:16px;display:flex;gap:12px;align-items:center">
+          <button type="submit">Submit query</button>
+          <span id="msg" class="note"></span>
+        </div>
+      </form>
+    </div>
+  </div>
+
+<script>
+  /* ===== Helpers & UI ===== */
+  const $ = s => document.querySelector(s);
+  let _token = null;
+
+  function mountUserButton(){
+    $('#user-button').innerHTML = '<div id="ub"></div>';
+    try { window.Clerk.mountUserButton($('#ub')); } catch(e){ console.log('mountUserButton error', e); }
+  }
+  function show(view){
+    ['viewHome','viewList','viewNew','viewDetails'].forEach(id => $('#'+id)?.classList.add('hidden'));
+    if (view) $('#'+view)?.classList.remove('hidden');
+  }
+  function showNav(showit){ $('#nav')?.classList.toggle('hidden', !showit); }
+  async function getToken(){ try { return await window.Clerk.session.getToken(); } catch(e){ console.log('getToken error', e); return null; } }
+
+  async function loadStats(){
+    const res = await fetch('/api/my_query_stats.php', { headers:{ 'Authorization':'Bearer '+_token }});
+    const d = await res.json();
+    if (!d.ok) return;
+    $('#cTotal').textContent = d.counts.total_cnt||0;
+    $('#cNew').textContent = d.counts.new_cnt||0;
+    $('#cAssigned').textContent = d.counts.assigned_cnt||0;
+    $('#cInproc').textContent = d.counts.inproc_cnt||0;
+    $('#cRed').textContent = d.counts.red_cnt||0;
+
+    const tb = $('#tblRecent');
+    if (!d.recent.length) { tb.innerHTML = '<tr><td>No recent queries.</td></tr>'; return; }
+    let html = '<thead><tr><th>Code</th><th>Status</th><th>Priority</th><th>Type</th><th>Created</th><th>Action</th></tr></thead><tbody>';
+    for (const r of d.recent) {
+      html += `<tr>
+        <td>${r.query_code||('#'+r.id)}</td>
+        <td><span class="badge">${r.status}</span></td>
+        <td>${r.priority}</td>
+        <td>${r.query_type}</td>
+        <td>${r.created_at}</td>
+        <td><button type="button" data-id="${r.id}" class="btn btnView">View</button></td>
+      </tr>`;
+    }
+    html += '</tbody>';
+    tb.innerHTML = html;
+
+    tb.querySelectorAll('.btnView').forEach(b => {
+      b.addEventListener('click', async () => {
+        const token = await window.Clerk.session.getToken();
+        const id = b.dataset.id;
+        window.location.href = '/customer/query.php?id=' + encodeURIComponent(id) + '&t=' + encodeURIComponent(token);
+      });
+    });
+  }
+
+  async function loadList(){
+    const res = await fetch('/api/my_queries.php', { headers:{ 'Authorization':'Bearer '+_token }});
+    const data = await res.json();
+    const tbl = $('#tbl');
+    if (!data.ok) { tbl.innerHTML = '<tr><td>Error loading.</td></tr>'; return; }
+    if (!data.rows.length) { tbl.innerHTML = '<tr><td>No queries yet.</td></tr>'; return; }
+    let html = '<thead><tr><th>Code</th><th>Status</th><th>Priority</th><th>Type</th><th>Team</th><th>Created</th><th>Action</th></tr></thead><tbody>';
+    for (const r of data.rows) {
+      html += `<tr>
+        <td>${r.query_code||'#'+r.id}</td>
+        <td><span class="badge">${r.status}</span></td>
+        <td>${r.priority}</td>
+        <td>${r.query_type}</td>
+        <td>${r.team_name||'-'}</td>
+        <td>${r.created_at}</td>
+        <td><button type="button" data-id="${r.id}" class="btn btnView">View</button></td>
+      </tr>`;
+    }
+    html += '</tbody>';
+    tbl.innerHTML = html;
+
+    tbl.querySelectorAll('.btnView').forEach(b => {
+      b.addEventListener('click', async () => {
+        const token = await window.Clerk.session.getToken();
+        const id = b.dataset.id;
+        window.location.href = '/customer/query.php?id=' + encodeURIComponent(id) + '&t=' + encodeURIComponent(token);
+      });
+    });
+  }
+
+  async function loadDetails(id){
+    try{
+      const res = await fetch('/api/query_details.php?id='+encodeURIComponent(id), {
+        headers:{ 'Authorization':'Bearer '+_token }
+      });
+      let raw = await res.text();
+      raw = raw.replace(/^\uFEFF/, '').trim();
+
+      let d;
+      try { d = JSON.parse(raw); }
+      catch (e) { console.error('Non-JSON response', raw); alert('Failed to load.'); return; }
+
+      if (!res.ok || !d.ok) { alert(d.error || ('Request failed: '+res.status)); return; }
+
+      const q = d.query;
+      $('#qdTitle').textContent = `Query ${q.query_code || ('#'+q.id)}`;
+      $('#qdMeta').innerHTML = `Status <span class="badge">${q.status}</span> · Team <strong>${q.team_name||'-'}</strong> · Priority <strong>${q.priority}</strong> · Type <strong>${q.query_type}</strong>`;
+      $('#qdDetails').textContent = q.product_details || '-';
+
+      const links = (q.product_links||'').split(',').map(s => s.trim()).filter(Boolean);
+      $('#qdLinks').innerHTML = links.length ? links.map(l => `<div><a href="${l}" target="_blank" rel="noopener">${l}</a></div>`).join('') : '<em>-</em>';
+
+      const attsBox = $('#qdAtts');
+      attsBox.innerHTML = (d.attachments||[]).length ? d.attachments.map(a=>{
+        const isImg = (a.mime||'').startsWith('image/');
+        return `<div style="margin-bottom:8px">
+          ${isImg ? `<img src="${a.path}" style="max-width:200px;border:1px solid #eee;border-radius:8px">` : ''}
+          <div><a href="${a.path}" target="_blank">${a.original_name||a.path}</a> <span class="note">${a.mime||''}</span></div>
+        </div>`;
+      }).join('') : '<em>No attachments</em>';
+
+      const box = $('#qdMsgs');
+      box.innerHTML = (d.messages||[]).length ? d.messages.map(m=>{
+        const who = m.sender_clerk_user_id ? 'You' : (m.sender_admin_id ? 'Team' : 'System');
+        return `<div style="margin-bottom:10px">
+          <div class="note">${m.created_at} — ${who} — ${m.direction}/${m.medium}</div>
+          <div style="white-space:pre-wrap">${m.body||''}</div>
+        </div>`;
+      }).join('') : '<em>No messages yet.</em>';
+
+      $('#msgQueryId').value = q.id;
+      show('viewDetails');
+    }catch(err){
+      console.error('loadDetails exception', err);
+      alert('Could not load details.');
+    }
+  }
+
+  async function sendCustomerMessage(ev){
+    ev.preventDefault();
+    const id = $('#msgQueryId').value;
+    const body = $('#msgBody').value.trim();
+    if (!body) return;
+    const fd = new FormData();
+    fd.append('id', id); fd.append('body', body);
+    const res = await fetch('/api/add_customer_message.php', {
+      method:'POST',
+      headers: { 'Authorization':'Bearer '+_token },
+      body: fd,
+      credentials: 'include'
+    });
+    const data = await res.json();
+    if (data.ok) { $('#msgBody').value=''; loadDetails(id); }
+    else alert(data.error||'Send failed');
+  }
+
+  // Countries via AJAX
+  async function populateCountries(){
+    const sel = document.getElementById('countrySelect');
+    const msg = document.getElementById('countryMsg');
+    sel.innerHTML = '<option value="">Loading countries...</option>';
+    try{
+      const res = await fetch('/api/get_countries.php', { credentials:'include' });
+      const data = await res.json();
+      if (!res.ok || !data.ok) throw new Error(data.error || 'Failed');
+
+      sel.innerHTML = '<option value="">-- Select Country --</option>';
+      for (const c of data.countries) {
+        const opt = document.createElement('option');
+        opt.value = c.id; opt.textContent = c.name;
+        sel.appendChild(opt);
+      }
+      msg.textContent = '';
+    }catch(e){
+      sel.innerHTML = '<option value="">-- Retry: countries failed to load --</option>';
+      msg.textContent = 'Could not load countries. Please try again.';
+    }
+  }
+
+  /* ===== Visibility rules ===== */
+
+  const GROUP_IDS = [
+    'groupProductName','groupShippingMode','groupQuantity','groupAttachments',
+    'groupLabelType','groupCarton','groupCbm','groupAddress','groupNotes',
+    'groupProductLinks','groupBudget'
+  ];
+
+  function setVisible(id, show){
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.style.display = show ? '' : 'none';
+  }
+  function showOnlyBasics(){
+    GROUP_IDS.forEach(id => setVisible(id, false));
+    document.getElementById('extendArea').classList.add('hidden');
+    const btn = document.getElementById('btnExtend');
+    btn.disabled = false;
+    btn.textContent = 'Extend Query';
+  }
+
+  function applyVisibility(){
+    const extendShown = !document.getElementById('extendArea').classList.contains('hidden');
+    if (!extendShown) return;
+
+    const type = document.getElementById('queryType').value;
+
+    setVisible('groupProductName', true);
+
+    if (type === 'shipping'){
+      setVisible('groupShippingMode', true);
+      setVisible('groupQuantity', true);
+      setVisible('groupAttachments', true);
+      setVisible('groupLabelType', true);
+      setVisible('groupCarton', true);
+      setVisible('groupCbm', true);
+      setVisible('groupAddress', true);
+      setVisible('groupNotes', true);
+      setVisible('groupProductLinks', false);
+      setVisible('groupBudget', false);
+    }
+    else if (type === 'sourcing'){
+      setVisible('groupShippingMode', false);
+      setVisible('groupQuantity', true);
+      setVisible('groupAttachments', true);
+      setVisible('groupAddress', true);
+      setVisible('groupNotes', true);
+      setVisible('groupProductLinks', true);
+      setVisible('groupBudget', true);
+      setVisible('groupLabelType', false);
+      setVisible('groupCarton', false);
+      setVisible('groupCbm', false);
+    }
+    else if (type === 'both'){
+      setVisible('groupShippingMode', true);
+      setVisible('groupQuantity', true);
+      setVisible('groupAttachments', true);
+      setVisible('groupAddress', true);
+      setVisible('groupNotes', true);
+      setVisible('groupProductLinks', true);
+      setVisible('groupBudget', true);
+      setVisible('groupLabelType', false);
+      setVisible('groupCarton', false);
+      setVisible('groupCbm', false);
+    }
+    else {
+      GROUP_IDS.forEach(id => setVisible(id, true));
+    }
+  }
+
+  function wireExtendControls(){
+    const btnExtend = document.getElementById('btnExtend');
+    const btnReset  = document.getElementById('btnReset');
+    const area = document.getElementById('extendArea');
+    const qt = document.getElementById('queryType');
+
+    btnExtend.addEventListener('click', () => {
+      area.classList.remove('hidden');
+      btnExtend.disabled = true;
+      btnExtend.textContent = 'Extended';
+      applyVisibility();
+      area.scrollIntoView({behavior:'smooth', block:'center'});
+    });
+
+    btnReset.addEventListener('click', () => {
+      ['product_name','product_links','quantity','budget','label_type','carton_count','cbm','address','notes']
+        .forEach(n => { const el = document.querySelector(`[name="${n}"]`); if (el) el.value=''; });
+      document.getElementById('shippingMode').value = 'unknown';
+      qt.value = 'sourcing';
+
+      showOnlyBasics();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    qt.addEventListener('change', applyVisibility);
+  }
+
+  /* ===== App shell ===== */
+
+  async function showAuth(){
+    showNav(false);
+    $('#auth').innerHTML = '<div id="sign-in"></div>';
+    try { window.Clerk.mountSignIn(document.getElementById('sign-in')); } catch(e){ console.log('mountSignIn error', e); }
+    show();
+  }
+
+  async function showApp(){
+    $('#auth').innerHTML = '';
+    mountUserButton();
+    showNav(true);
+
+    $('#lnkHome').onclick = ()=>{ show('viewHome'); loadStats(); };
+    $('#lnkList').onclick = ()=>{ show('viewList'); loadList(); };
+    $('#lnkNew').onclick  = ()=>{ show('viewNew'); populateCountries(); showOnlyBasics(); };
+    $('#backToList').onclick = ()=>{ show('viewList'); loadList(); };
+    $('#msgForm').addEventListener('submit', sendCustomerMessage);
+
+    // NEW: wire the My Orders button (includes Clerk token)
+    const btnOrders = document.getElementById('btnOrders');
+    if (btnOrders) {
+      btnOrders.addEventListener('click', async () => {
+        try {
+          const token = await window.Clerk.session.getToken();
+          const url = '/customer/orders.php?t=' + encodeURIComponent(token || '');
+          window.location.href = url;
+        } catch(e) {
+          // fallback without token
+          window.location.href = '/customer/orders.php';
+        }
+      });
+    }
+
+    show('viewHome'); loadStats();
+  }
+
+  async function init(){
+    if (!window.Clerk) { console.log('Clerk script missing.'); return; }
+    try { await window.Clerk.load(); } catch(e){ console.log('Clerk.load error', e); }
+
+    window.Clerk.addListener(async (e) => {
+      if (e.user) { _token = await getToken(); showApp(); }
+      else { showAuth(); }
+    });
+
+    if (window.Clerk.session) { _token = await getToken(); showApp(); }
+    else { showAuth(); }
+
+    const QF = document.getElementById('queryForm');
+    if (QF) QF.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const m=document.getElementById('msg'); if (m) m.textContent='Submitting...';
+      try{
+        const fd = new FormData(ev.target);
+        const res = await fetch('/api/create_query.php', {
+          method:'POST', headers:{ 'Authorization':'Bearer '+_token }, body: fd, credentials:'include'
+        });
+        const data = await res.json();
+        if (res.ok && data.success) { if (m) m.textContent='Submitted!'; ev.target.reset(); show('viewList'); loadList(); }
+        else { if (m) m.textContent=(data && data.error) ? data.error : 'Submission failed'; }
+      }catch(err){ if (m) m.textContent='Error: '+err.message; }
+    });
+
+    wireExtendControls();
+  }
+
+  window.addEventListener('load', init);
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+Options -Indexes
+
+# Apache 2.4+
+<FilesMatch "\.(php|phtml|phar|php\d?)$">
+  Require all denied
+</FilesMatch>
+
+# Backward compatibility (older Apache)
+<IfModule !mod_authz_core.c>
+  Order allow,deny
+  Deny from all
+</IfModule>

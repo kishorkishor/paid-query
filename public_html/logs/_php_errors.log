@@ -1,0 +1,16 @@
+[01-Oct-2025 08:51:29 UTC] [order_checkout] normalize approved_price failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'approved_price' in 'SET'
+[01-Oct-2025 14:56:32 UTC] [order_checkout] normalize approved_price failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'approved_price' in 'SET'
+[01-Oct-2025 15:08:44 UTC] [order_checkout] normalize approved_price failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'approved_price' in 'SET'
+[01-Oct-2025 15:08:54 UTC] [order_checkout] normalize approved_price failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'approved_price' in 'SET'
+[01-Oct-2025 15:09:00 UTC] [order_checkout] normalize approved_price failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'approved_price' in 'SET'
+[01-Oct-2025 15:09:00 UTC] [order_checkout] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'u966125597_cosmictrd.orders' doesn't exist @/home/u966125597/domains/cosmictrd.io/public_html/customer/order_checkout.php:142
+[01-Oct-2025 15:31:14 UTC] [order_checkout] normalize approved_price failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'approved_price' in 'SET'
+[01-Oct-2025 15:31:19 UTC] [order_checkout] normalize approved_price failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'approved_price' in 'SET'
+[01-Oct-2025 15:31:19 UTC] [order_checkout] SQLSTATE[42S22]: Column not found: 1054 Unknown column 'closed_reason' in 'SET' @/home/u966125597/domains/cosmictrd.io/public_html/customer/order_checkout.php:167
+[02-Oct-2025 13:08:24 UTC] [order_checkout] SQLSTATE[42S22]: Column not found: 1054 Unknown column 'order_type' in 'INSERT INTO' @/home/u966125597/domains/cosmictrd.io/public_html/customer/order_checkout.php:139
+[02-Oct-2025 13:08:39 UTC] [order_checkout] SQLSTATE[42S22]: Column not found: 1054 Unknown column 'order_type' in 'INSERT INTO' @/home/u966125597/domains/cosmictrd.io/public_html/customer/order_checkout.php:139
+[18-Oct-2025 05:14:46 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'no_of_carton' in 'SELECT' in /home/u966125597/domains/cosmictrd.io/public_html/app/inbound_ship.php:25
+Stack trace:
+#0 /home/u966125597/domains/cosmictrd.io/public_html/app/inbound_ship.php(25): PDOStatement->execute()
+#1 {main}
+  thrown in /home/u966125597/domains/cosmictrd.io/public_html/app/inbound_ship.php on line 25
