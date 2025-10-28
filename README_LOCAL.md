@@ -1,41 +1,34 @@
-Local Run (PHP + Frontend)
+Cosmic Trading Customer Portal
 
-Overview
-- Docroot is `public_html`. It contains the frontend (`index.html`) and customer PHP pages under `public_html/customer`, plus API endpoints under `public_html/api`.
-- The customer frontend already links to the PHP pages (e.g., the "My Orders" button routes to `/customer/orders.php?t=...`).
+Production-ready Next.js 16 app (TypeScript + Tailwind) with a PHP backend in `public_html`. This repository is prepared for Netlify deployment.
 
-Prerequisites
-- PHP 7.4+ installed and on PATH
-- PHP extensions enabled: `pdo_mysql`, `openssl`
-  - On Windows, edit your `php.ini` and ensure lines exist (uncomment if needed):
-    - `extension=openssl`
-    - `extension=pdo_mysql`
+Tech Stack
+- Next.js 16 (App Router), React 19, TypeScript
+- Tailwind CSS 4, Framer Motion
+- React Query (@tanstack/react-query)
+- Clerk (auth)
+- PHP 7.4+ for legacy APIs under `public_html/api`
 
-Start the local server
-- Option A (PowerShell): `./serve.ps1`
-- Option B (CMD): `serve.bat`
-- This serves `public_html` at `http://localhost:8000/`.
+Run Locally
+1) PHP dev server (serves real APIs):
+   - PowerShell: `./serve.ps1 -Port 8000`
+   - CMD: `serve.bat`
+   - URL: `http://localhost:8000`
+2) Next.js app:
+   - `cd "customer project/cosmic-portal"`
+   - Set `NEXT_PUBLIC_API_BASE_URL=http://localhost:8000`
+   - `npm run dev` → `http://localhost:3000`
 
-Using the app
-- Open `http://localhost:8000/index.html`.
-- Sign in via Clerk (uses the configured test publishable key in `index.html`).
-  - Ensure your Clerk project allows `http://localhost:8000` as an authorized origin in its dashboard.
-- The frontend calls API endpoints at `/api/...` and links to customer pages under `/customer/...`.
-- "My Orders" button navigates to `/customer/orders.php?t=<ClerkToken>`.
+Netlify Deployment
+- Base directory: `customer project/cosmic-portal`
+- Build command: `npm run build`
+- Publish directory: `.next`
+- Environment:
+  - `NEXT_PUBLIC_API_BASE_URL` = your PHP host (e.g. `https://yourdomain.com`)
+  - `NEXT_TELEMETRY_DISABLED=1`
+  - Clerk keys if using auth
+- `netlify.toml` and `@netlify/plugin-nextjs` are included in the Next app directory.
 
-Database
-- DB settings are in:
-  - `public_html/api/config.php`
-  - `public_html/app/config.php`
-- These must point to a reachable MySQL instance. Without a working DB and `pdo_mysql`, API and server-rendered pages that query data will error.
-
-Diagnostics
-- Visit `http://localhost:8000/app/_diag/db_ping.php` to verify DB connectivity.
-
-Common issues
-- Missing `pdo_mysql`: enable it in `php.ini` (Windows: `extension=pdo_mysql`).
-- Missing `openssl`: enable it in `php.ini`.
-- Clerk token errors locally:
-  - Add `http://localhost:8000` to allowed origins in Clerk settings.
-  - Ensure `CLERK_PEM_PUBLIC_KEY` in `public_html/api/config.php` matches your Clerk project's public key.
+Notes
+- Some modules still use mock routes until corresponding PHP JSON endpoints are added (orders, wallet history). Real query APIs are wired.
 
